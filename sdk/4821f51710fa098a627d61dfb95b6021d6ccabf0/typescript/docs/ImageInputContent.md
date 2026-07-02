@@ -1,0 +1,39 @@
+
+# ImageInputContent
+
+An image input content fragment.
+
+## Properties
+
+Name | Type
+------------ | -------------
+`type` | string
+`source` | [Source](Source.md)
+`metadata` | [](.md)
+
+## Example
+
+```typescript
+import type { ImageInputContent } from ''
+
+// TODO: Update the object below with actual values
+const example = {
+  "type": null,
+  "source": null,
+  "metadata": null,
+} satisfies ImageInputContent
+
+console.log(example)
+
+// Convert the instance to a JSON string
+const exampleJSON: string = JSON.stringify(example)
+console.log(exampleJSON)
+
+// Parse the JSON string back to an object
+const exampleParsed = JSON.parse(exampleJSON) as ImageInputContent
+console.log(exampleParsed)
+```
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
