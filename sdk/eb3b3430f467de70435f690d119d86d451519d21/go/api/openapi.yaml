@@ -1,0 +1,2886 @@
+openapi: 3.1.0
+info:
+  title: gantry
+  version: 0.1.0
+servers:
+- url: /
+paths:
+  /ready:
+    get:
+      operationId: ready_ready_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+      summary: Ready
+  /billing/:
+    post:
+      operationId: post_billing__post
+      parameters:
+      - explode: false
+        in: header
+        name: idempotency-key
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                format: uuid
+                title: Response Post Billing  Post
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: Post
+      tags:
+      - billing
+      - internal
+  /billing/{transaction_uid}/capture:
+    post:
+      operationId: capture_billing__transaction_uid__capture_post
+      parameters:
+      - explode: false
+        in: path
+        name: transaction_uid
+        required: true
+        schema:
+          format: uuid
+          title: Transaction Uid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaptureRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                title: Response Capture Billing  Transaction Uid  Capture Post
+                type: boolean
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: Capture
+      tags:
+      - billing
+      - internal
+  /ai-gateway/models:
+    get:
+      operationId: get_models_ai_gateway_models_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                title: Response Get Models Ai Gateway Models Get
+                type: array
+          description: Successful Response
+      summary: Get Models
+      tags:
+      - ai-gateway
+  /ai-gateway/ag-ui/{model}:
+    post:
+      operationId: ag_ui_gateway_ai_gateway_ag_ui__model__post
+      parameters:
+      - explode: false
+        in: path
+        name: model
+        required: true
+        schema:
+          title: Model
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: project_id
+        required: true
+        schema:
+          format: uuid
+          title: Project Id
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunAgentInputWithModelSettings"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response_Ag_Ui_Gateway_Ai_Gateway_Ag_Ui__Model__Post"
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: Ag Ui Gateway
+      tags:
+      - ai-gateway
+  /rag/files:
+    get:
+      description: Endpoint to list distinct file ids stored in a RAG.
+      operationId: get_files_rag_files_get
+      parameters:
+      - explode: true
+        in: query
+        name: project_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Project Uuid
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/FileInfoResponse"
+                title: Response Get Files Rag Files Get
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: List files in a RAG.
+      tags:
+      - rag
+    post:
+      description: Endpoint to add a new file to a RAG.
+      operationId: add_file_rag_files_post
+      parameters:
+      - explode: true
+        in: query
+        name: project_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Project Uuid
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddRagFileRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                title: Response Add File Rag Files Post
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: Add a file to a RAG.
+      tags:
+      - rag
+  /rag/text:
+    post:
+      description: Endpoint to add new text (without an associated file) to a RAG.
+        The text will be chunked and embedded asynchronously.
+      operationId: add_text_rag_text_post
+      parameters:
+      - explode: true
+        in: query
+        name: project_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Project Uuid
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddTextToRagRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                title: Response Add Text Rag Text Post
+                type: string
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: Add text to a RAG.
+      tags:
+      - rag
+  /rag/files/{task_id}:
+    get:
+      description: Endpoint to get the status of an asynchronous RAG file embedding
+        task.
+      operationId: get_task_status_rag_files__task_id__get
+      parameters:
+      - explode: false
+        in: path
+        name: task_id
+        required: true
+        schema:
+          title: Task Id
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: project_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Project Uuid
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmbeddingTaskResponse"
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: Get RAG file embedding task status.
+      tags:
+      - rag
+  /rag/query/text:
+    post:
+      description: Endpoint to run a similarity search against a RAG by text. The
+        service will generate an embedding for the query text and then run the similarity
+        search.
+      operationId: query_similar_by_text_rag_query_text_post
+      parameters:
+      - explode: true
+        in: query
+        name: project_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Project Uuid
+          type: string
+        style: form
+      - description: "Whether to include embeddings in the response. Embeddings can\
+          \ be large, so they are excluded by default."
+        explode: true
+        in: query
+        name: include_embedding
+        required: false
+        schema:
+          default: false
+          description: "Whether to include embeddings in the response. Embeddings\
+            \ can be large, so they are excluded by default."
+          title: Include Embedding
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QueryRagQueryByTextRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/RagQueryResponse"
+                title: Response Query Similar By Text Rag Query Text Post
+                type: array
+          description: Successful Response
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+          description: Validation Error
+      summary: Query a RAG by text.
+      tags:
+      - rag
+components:
+  schemas:
+    ActivityDeltaEvent:
+      additionalProperties: true
+      description: Event containing a JSON Patch delta for an activity message.
+      properties:
+        type:
+          default: ACTIVITY_DELTA
+          enum:
+          - ACTIVITY_DELTA
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+        activityType:
+          title: Activitytype
+          type: string
+        patch:
+          items: {}
+          title: Patch
+          type: array
+      required:
+      - activityType
+      - messageId
+      - patch
+      title: ActivityDeltaEvent
+    ActivityMessage:
+      additionalProperties: {}
+      description: An activity progress message emitted between chat messages.
+      properties:
+        id:
+          title: Id
+          type: string
+        role:
+          default: activity
+          enum:
+          - activity
+          title: Role
+          type: string
+        activityType:
+          title: Activitytype
+          type: string
+        content:
+          additionalProperties: true
+          title: Content
+          type: object
+      required:
+      - activityType
+      - content
+      - id
+      title: ActivityMessage
+    ActivitySnapshotEvent:
+      additionalProperties: true
+      description: Event containing a snapshot of an activity message.
+      properties:
+        type:
+          default: ACTIVITY_SNAPSHOT
+          enum:
+          - ACTIVITY_SNAPSHOT
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+        activityType:
+          title: Activitytype
+          type: string
+        content:
+          title: Content
+        replace:
+          default: true
+          title: Replace
+          type: boolean
+      required:
+      - activityType
+      - content
+      - messageId
+      title: ActivitySnapshotEvent
+    AddRagFileRequest:
+      description: DTO for adding a file (with embedding) to a RAG bucket.
+      example:
+        file_uid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        chunk_size: 0
+        lang: simple
+        chunk_overlap: 0
+        chunk_splitter: ""
+        chunk_splitter_options:
+          chunk_size: 0
+          keep_separator: true
+          is_separator_regex: true
+          chunk_overlap: 6
+          separator: separator
+      properties:
+        file_uid:
+          format: uuid
+          title: File Uid
+          type: string
+        lang:
+          default: simple
+          title: Lang
+          type: string
+        chunk_splitter:
+          allOf:
+          - $ref: "#/components/schemas/ChunkSplitterType"
+          default: recursive
+        chunk_splitter_options:
+          $ref: "#/components/schemas/Chunk_Splitter_Options"
+        chunk_size:
+          default: 1000
+          exclusiveMinimum: true
+          minimum: 0.0
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          default: 150
+          minimum: 0.0
+          title: Chunk Overlap
+          type: integer
+      required:
+      - file_uid
+      title: AddRagFileRequest
+    AddTextToRagRequest:
+      description: DTO for adding text (with embedding) to a RAG bucket without an
+        associated file. This can be used for ad-hoc knowledge that doesn't come from
+        a file.
+      example:
+        chunk_size: 0
+        metadata:
+          key: ""
+        text: Text
+        lang: simple
+        chunk_overlap: 0
+        chunk_splitter: ""
+        chunk_splitter_options:
+          chunk_size: 0
+          keep_separator: true
+          is_separator_regex: true
+          chunk_overlap: 6
+          separator: separator
+      properties:
+        text:
+          $ref: "#/components/schemas/Text"
+        lang:
+          default: simple
+          title: Lang
+          type: string
+        chunk_splitter:
+          allOf:
+          - $ref: "#/components/schemas/ChunkSplitterType"
+          default: recursive
+        chunk_splitter_options:
+          $ref: "#/components/schemas/Chunk_Splitter_Options"
+        chunk_size:
+          default: 1000
+          exclusiveMinimum: true
+          minimum: 0.0
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          default: 150
+          minimum: 0.0
+          title: Chunk Overlap
+          type: integer
+        metadata:
+          additionalProperties: true
+          nullable: true
+          type: object
+      required:
+      - text
+      title: AddTextToRagRequest
+    AssistantMessage:
+      additionalProperties: true
+      description: An assistant message.
+      properties:
+        id:
+          title: Id
+          type: string
+        role:
+          default: assistant
+          enum:
+          - assistant
+          title: Role
+          type: string
+        content:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+        encryptedValue:
+          nullable: true
+          type: string
+        toolCalls:
+          items:
+            $ref: "#/components/schemas/ToolCall"
+          nullable: true
+          type: array
+      required:
+      - id
+      title: AssistantMessage
+    AudioInputContent:
+      additionalProperties: true
+      description: An audio input content fragment.
+      properties:
+        type:
+          default: audio
+          enum:
+          - audio
+          title: Type
+          type: string
+        source:
+          $ref: "#/components/schemas/Source"
+        metadata:
+          anyOf: []
+          nullable: true
+          title: Metadata
+      required:
+      - source
+      title: AudioInputContent
+    BinaryInputContent:
+      additionalProperties: true
+      description: A deprecated binary payload reference in a multimodal user message.
+      properties:
+        type:
+          default: binary
+          enum:
+          - binary
+          title: Type
+          type: string
+        mimeType:
+          title: Mimetype
+          type: string
+        id:
+          nullable: true
+          type: string
+        url:
+          nullable: true
+          type: string
+        data:
+          nullable: true
+          type: string
+        filename:
+          nullable: true
+          type: string
+      required:
+      - mimeType
+      title: BinaryInputContent
+    CaptureRequest:
+      example:
+        real_amount:
+          scale: 6
+          value: 0
+      properties:
+        real_amount:
+          $ref: "#/components/schemas/ScaledAmount"
+      required:
+      - real_amount
+      title: CaptureRequest
+    CharacterTextSplitterOptions:
+      example:
+        chunk_size: 0
+        keep_separator: true
+        is_separator_regex: true
+        chunk_overlap: 6
+        separator: separator
+      properties:
+        separator:
+          title: Separator
+          type: string
+        is_separator_regex:
+          title: Is Separator Regex
+          type: boolean
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+        keep_separator:
+          $ref: "#/components/schemas/Keep_Separator"
+      title: CharacterTextSplitterOptions
+    ChunkSplitterType:
+      enum:
+      - simple
+      - character
+      - recursive
+      - token
+      - markdown
+      - markdown_header
+      - html
+      - html_header
+      - html_semantic_preserving
+      - html_section
+      - recursive_json
+      - experimental_markdown_syntax
+      - code_language_c
+      - code_language_cobol
+      - code_language_cpp
+      - code_language_csharp
+      - code_language_go
+      - code_language_haskell
+      - code_language_html
+      - code_language_java
+      - code_language_jsx
+      - code_language_kotlin
+      - code_language_latex
+      - code_language_lua
+      - code_language_markdown
+      - code_language_perl
+      - code_language_php
+      - code_language_proto
+      - code_language_python
+      - code_language_rst
+      - code_language_ruby
+      - code_language_rust
+      - code_language_scala
+      - code_language_sol
+      - code_language_swift
+      - code_language_ts
+      - code_language_js
+      - latex
+      - nltk
+      - spacy
+      - konlpy
+      - sentence_transformers_token
+      - paragraph
+      - line
+      title: ChunkSplitterType
+      type: string
+    Context:
+      additionalProperties: true
+      description: Additional context for the agent.
+      example:
+        description: description
+        value: value
+      properties:
+        description:
+          title: Description
+          type: string
+        value:
+          title: Value
+          type: string
+      required:
+      - description
+      - value
+      title: Context
+    CustomEvent:
+      additionalProperties: true
+      description: Event containing a custom event.
+      properties:
+        type:
+          default: CUSTOM
+          enum:
+          - CUSTOM
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        name:
+          title: Name
+          type: string
+        value:
+          title: Value
+      required:
+      - name
+      - value
+      title: CustomEvent
+    DeveloperMessage:
+      additionalProperties: true
+      description: A developer message.
+      example:
+        role: developer
+        encryptedValue: encryptedValue
+        name: name
+        id: id
+        content: content
+      properties:
+        id:
+          title: Id
+          type: string
+        role:
+          default: developer
+          enum:
+          - developer
+          title: Role
+          type: string
+        content:
+          title: Content
+          type: string
+        name:
+          nullable: true
+          type: string
+        encryptedValue:
+          nullable: true
+          type: string
+      required:
+      - content
+      - id
+      title: DeveloperMessage
+    DocumentInputContent:
+      additionalProperties: true
+      description: A document input content fragment.
+      properties:
+        type:
+          default: document
+          enum:
+          - document
+          title: Type
+          type: string
+        source:
+          $ref: "#/components/schemas/Source"
+        metadata:
+          anyOf: []
+          nullable: true
+          title: Metadata
+      required:
+      - source
+      title: DocumentInputContent
+    EmbeddingTaskResponse:
+      description: DTO for RAG embedding task status response.
+      example:
+        file_uid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        project_uuid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        metadata:
+          key: ""
+        chunk_size: 0
+        task_id: task_id
+        text: Text_1
+        type: file
+        chunk_overlap: 6
+        chunk_splitter: simple
+        failed_reason: failed_reason
+        chunk_splitter_options:
+          chunk_size: 0
+          keep_separator: true
+          is_separator_regex: true
+          chunk_overlap: 6
+          separator: separator
+        status: pending
+      properties:
+        task_id:
+          title: Task Id
+          type: string
+        file_uid:
+          format: uuid
+          nullable: true
+          type: string
+        text:
+          $ref: "#/components/schemas/Text_1"
+        metadata:
+          additionalProperties: true
+          nullable: true
+          type: object
+        type:
+          enum:
+          - file
+          - text
+          title: Type
+          type: string
+        project_uuid:
+          format: uuid
+          title: Project Uuid
+          type: string
+        chunk_splitter:
+          $ref: "#/components/schemas/ChunkSplitterType"
+        chunk_splitter_options:
+          $ref: "#/components/schemas/Chunk_Splitter_Options"
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+        failed_reason:
+          nullable: true
+          type: string
+        status:
+          enum:
+          - pending
+          - completed
+          - failed_and_retrying
+          - failed_and_dropped
+          title: Status
+          type: string
+      required:
+      - chunk_overlap
+      - chunk_size
+      - chunk_splitter
+      - file_uid
+      - metadata
+      - project_uuid
+      - status
+      - task_id
+      - text
+      - type
+      title: EmbeddingTaskResponse
+    ExperimentalMarkdownSyntaxTextSplitterOptions:
+      properties:
+        headers_to_split_on:
+          items:
+            items: {}
+            maxItems: 2
+            minItems: 2
+            type: array
+          title: Headers To Split On
+          type: array
+        return_each_line:
+          title: Return Each Line
+          type: boolean
+        strip_headers:
+          title: Strip Headers
+          type: boolean
+        custom_header_patterns:
+          additionalProperties:
+            type: integer
+          title: Custom Header Patterns
+      title: ExperimentalMarkdownSyntaxTextSplitterOptions
+    FileInfoResponse:
+      description: DTO for file info response.
+      example:
+        filename: filename
+        size: 0
+        mime_type: mime_type
+        extra_metadata:
+          key: ""
+        created_at: 2000-01-23T04:56:07.000+00:00
+        id: id
+      properties:
+        id:
+          title: Id
+          type: string
+        filename:
+          title: Filename
+          type: string
+        mime_type:
+          title: Mime Type
+          type: string
+        size:
+          title: Size
+          type: integer
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        extra_metadata:
+          additionalProperties: true
+          nullable: true
+          type: object
+      required:
+      - created_at
+      - extra_metadata
+      - filename
+      - id
+      - mime_type
+      - size
+      title: FileInfoResponse
+    FunctionCall:
+      additionalProperties: true
+      description: Name and arguments of a function call.
+      properties:
+        name:
+          title: Name
+          type: string
+        arguments:
+          title: Arguments
+          type: string
+      required:
+      - arguments
+      - name
+      title: FunctionCall
+    HTMLHeaderTextSplitterOptions:
+      properties:
+        headers_to_split_on:
+          items:
+            items: {}
+            maxItems: 2
+            minItems: 2
+            type: array
+          title: Headers To Split On
+          type: array
+        return_each_element:
+          title: Return Each Element
+          type: boolean
+      title: HTMLHeaderTextSplitterOptions
+    HTMLSectionSplitterOptions:
+      properties:
+        headers_to_split_on:
+          items:
+            items: {}
+            maxItems: 2
+            minItems: 2
+            type: array
+          title: Headers To Split On
+          type: array
+        return_each_element:
+          title: Return Each Element
+          type: boolean
+      title: HTMLSectionSplitterOptions
+    HTMLSemanticPreservingSplitterOptions:
+      properties:
+        headers_to_split_on:
+          items:
+            items: {}
+            maxItems: 2
+            minItems: 2
+            type: array
+          title: Headers To Split On
+          type: array
+        max_chunk_size:
+          title: Max Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+        separators:
+          items:
+            type: string
+          title: Separators
+          type: array
+        elements_to_preserve:
+          items:
+            type: string
+          title: Elements To Preserve
+          type: array
+        preserve_links:
+          title: Preserve Links
+          type: boolean
+        preserve_images:
+          title: Preserve Images
+          type: boolean
+        preserve_videos:
+          title: Preserve Videos
+          type: boolean
+        preserve_audio:
+          title: Preserve Audio
+          type: boolean
+        custom_handlers:
+          additionalProperties: true
+          title: Custom Handlers
+          type: object
+        stopword_removal:
+          title: Stopword Removal
+          type: boolean
+        stopword_lang:
+          title: Stopword Lang
+          type: string
+        normalize_text:
+          title: Normalize Text
+          type: boolean
+        external_metadata:
+          additionalProperties:
+            type: string
+          title: External Metadata
+        allowlist_tags:
+          items:
+            type: string
+          title: Allowlist Tags
+          type: array
+        denylist_tags:
+          items:
+            type: string
+          title: Denylist Tags
+          type: array
+        preserve_parent_metadata:
+          title: Preserve Parent Metadata
+          type: boolean
+        keep_separator:
+          $ref: "#/components/schemas/Keep_Separator"
+      title: HTMLSemanticPreservingSplitterOptions
+    HTTPValidationError:
+      example:
+        detail:
+        - msg: msg
+          loc:
+          - Location_inner
+          - Location_inner
+          input: ""
+          ctx: "{}"
+          type: type
+        - msg: msg
+          loc:
+          - Location_inner
+          - Location_inner
+          input: ""
+          ctx: "{}"
+          type: type
+      properties:
+        detail:
+          items:
+            $ref: "#/components/schemas/ValidationError"
+          title: Detail
+          type: array
+      title: HTTPValidationError
+    ImageInputContent:
+      additionalProperties: true
+      description: An image input content fragment.
+      properties:
+        type:
+          default: image
+          enum:
+          - image
+          title: Type
+          type: string
+        source:
+          $ref: "#/components/schemas/Source"
+        metadata:
+          anyOf: []
+          nullable: true
+          title: Metadata
+      required:
+      - source
+      title: ImageInputContent
+    InputContentDataSource:
+      additionalProperties: true
+      description: Inline base64-encoded source.
+      properties:
+        type:
+          default: data
+          enum:
+          - data
+          title: Type
+          type: string
+        value:
+          title: Value
+          type: string
+        mimeType:
+          title: Mimetype
+          type: string
+      required:
+      - mimeType
+      - value
+      title: InputContentDataSource
+    InputContentUrlSource:
+      additionalProperties: true
+      description: URL-referenced source.
+      properties:
+        type:
+          default: url
+          enum:
+          - url
+          title: Type
+          type: string
+        value:
+          title: Value
+          type: string
+        mimeType:
+          nullable: true
+          type: string
+      required:
+      - value
+      title: InputContentUrlSource
+    KonlpyTextSplitterOptions:
+      properties:
+        separator:
+          title: Separator
+          type: string
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+      title: KonlpyTextSplitterOptions
+    MarkdownHeaderTextSplitterOptions:
+      properties:
+        headers_to_split_on:
+          items:
+            items: {}
+            maxItems: 2
+            minItems: 2
+            type: array
+          title: Headers To Split On
+          type: array
+        return_each_line:
+          title: Return Each Line
+          type: boolean
+        strip_headers:
+          title: Strip Headers
+          type: boolean
+        custom_header_patterns:
+          additionalProperties:
+            type: integer
+          title: Custom Header Patterns
+      title: MarkdownHeaderTextSplitterOptions
+    MarkdownTextSplitterOptions:
+      properties:
+        separators:
+          items:
+            type: string
+          title: Separators
+          type: array
+        keep_separator:
+          $ref: "#/components/schemas/Keep_Separator"
+        is_separator_regex:
+          title: Is Separator Regex
+          type: boolean
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+      title: MarkdownTextSplitterOptions
+    MessagesSnapshotEvent:
+      additionalProperties: true
+      description: Event containing a snapshot of the messages.
+      properties:
+        type:
+          default: MESSAGES_SNAPSHOT
+          enum:
+          - MESSAGES_SNAPSHOT
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messages:
+          items:
+            $ref: "#/components/schemas/Messages_inner"
+          title: Messages
+          type: array
+      required:
+      - messages
+      title: MessagesSnapshotEvent
+    ModelSettingsInput:
+      additionalProperties: true
+      properties:
+        maxTokens:
+          title: Maxtokens
+          type: integer
+        temperature:
+          title: Temperature
+          type: number
+        topP:
+          title: Topp
+          type: number
+        timeout:
+          title: Timeout
+          type: number
+        parallelToolCalls:
+          title: Paralleltoolcalls
+          type: boolean
+        seed:
+          title: Seed
+          type: integer
+        presencePenalty:
+          title: Presencepenalty
+          type: number
+        frequencyPenalty:
+          title: Frequencypenalty
+          type: number
+        logitBias:
+          additionalProperties:
+            type: integer
+          title: Logitbias
+        stopSequences:
+          items:
+            type: string
+          title: Stopsequences
+          type: array
+        thinking:
+          $ref: "#/components/schemas/Thinking"
+        serviceTier:
+          enum:
+          - auto
+          - default
+          - flex
+          - priority
+          title: Servicetier
+          type: string
+      title: ModelSettingsInput
+    NLTKTextSplitterOptions:
+      properties:
+        separator:
+          title: Separator
+          type: string
+        language:
+          title: Language
+          type: string
+        use_span_tokenize:
+          title: Use Span Tokenize
+          type: boolean
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+      title: NLTKTextSplitterOptions
+    PostRequest:
+      example:
+        api_key_uuid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        amount:
+          scale: 6
+          value: 0
+        capture: false
+        details:
+          key: ""
+      properties:
+        api_key_uuid:
+          format: uuid
+          title: Api Key Uuid
+          type: string
+        amount:
+          $ref: "#/components/schemas/ScaledAmount"
+        details:
+          additionalProperties: true
+          default: {}
+          title: Details
+          type: object
+        capture:
+          default: false
+          title: Capture
+          type: boolean
+      required:
+      - amount
+      - api_key_uuid
+      title: PostRequest
+    QueryFilterByFileMetadata:
+      description: DTO for querying RAG embeddings with file metadata filters.
+      example:
+        file_metadata_filters:
+          key: File_Metadata_Filters_value
+      properties:
+        file_metadata_filters:
+          additionalProperties:
+            $ref: "#/components/schemas/File_Metadata_Filters_value"
+          title: File Metadata Filters
+      required:
+      - file_metadata_filters
+      title: QueryFilterByFileMetadata
+    QueryFilterByFileUid:
+      description: DTO for querying RAG embeddings with file UID filters.
+      properties:
+        file_uids:
+          items:
+            format: uuid
+            type: string
+          title: File Uids
+          type: array
+      required:
+      - file_uids
+      title: QueryFilterByFileUid
+    QueryRagQueryByTextRequest:
+      description: DTO for querying RAG embeddings by text.
+      example:
+        hybrid_search_bm25_top_k: 602
+        hybrid_search_semantic_top_k: 146
+        top_k: 8
+        hybrid_search_bm25_lang: simple
+        filters:
+          file_metadata_filters:
+            key: File_Metadata_Filters_value
+        query_text: query_text
+        hybrid_search: false
+      properties:
+        query_text:
+          title: Query Text
+          type: string
+        top_k:
+          default: 5
+          exclusiveMinimum: true
+          maximum: 100.0
+          minimum: 0.0
+          title: Top K
+          type: integer
+        filters:
+          $ref: "#/components/schemas/Filters"
+        hybrid_search:
+          default: false
+          description: "Whether to perform a hybrid search that combines vector similarity\
+            \ and BM25 text search. If true, the service will first use BM25 + semantic\
+            \ search to filter candidates and then rerank them using vector similarity."
+          title: Hybrid Search
+          type: boolean
+        hybrid_search_bm25_top_k:
+          default: 5
+          description: "When hybrid_search is true, this parameter controls the number\
+            \ of top candidates to retrieve using BM25 before reranking with vector\
+            \ similarity. A higher value may improve recall but increase latency."
+          exclusiveMinimum: true
+          maximum: 1000.0
+          minimum: 0.0
+          title: Hybrid Search Bm25 Top K
+          type: integer
+        hybrid_search_semantic_top_k:
+          default: 5
+          description: "When hybrid_search is true, this parameter controls the number\
+            \ of top candidates to retrieve using semantic search before reranking\
+            \ with vector similarity. A higher value may improve recall but increase\
+            \ latency."
+          exclusiveMinimum: true
+          maximum: 1000.0
+          minimum: 0.0
+          title: Hybrid Search Semantic Top K
+          type: integer
+        hybrid_search_bm25_lang:
+          default: simple
+          description: "When hybrid_search is true, this parameter specifies the language\
+            \ to use for BM25 search. This can affect tokenization and stopword removal,\
+            \ which in turn can impact search results. The default 'simple' option\
+            \ applies basic tokenization and is suitable for many languages, but you\
+            \ may want to specify a particular language for better results with certain\
+            \ languages."
+          title: Hybrid Search Bm25 Lang
+          type: string
+      required:
+      - query_text
+      title: QueryRagQueryByTextRequest
+    RagQueryResponse:
+      description: DTO for RAG query response.
+      example:
+        metadata:
+          key: ""
+        vector_distance: 6.027456183070403
+        bm25_score: 1.4658129805029452
+        rerank_score: 5.962133916683182
+        file_info: ""
+        created_at: 2000-01-23T04:56:07.000+00:00
+        text: text
+        embedding:
+        - 0.8008281904610115
+        - 0.8008281904610115
+      properties:
+        file_info:
+          allOf:
+          - $ref: "#/components/schemas/FileInfoResponse"
+          nullable: true
+        text:
+          title: Text
+          type: string
+        embedding:
+          items:
+            type: number
+          title: Embedding
+          type: array
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        metadata:
+          additionalProperties: true
+          nullable: true
+          type: object
+        vector_distance:
+          nullable: true
+          type: number
+        bm25_score:
+          nullable: true
+          type: number
+        rerank_score:
+          nullable: true
+          type: number
+      required:
+      - created_at
+      - embedding
+      - file_info
+      - text
+      title: RagQueryResponse
+    RawEvent:
+      additionalProperties: true
+      description: Event containing a raw event.
+      properties:
+        type:
+          default: RAW
+          enum:
+          - RAW
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        event:
+          title: Event
+        source:
+          nullable: true
+          type: string
+      required:
+      - event
+      title: RawEvent
+    ReasoningEncryptedValueEvent:
+      additionalProperties: true
+      description: Event containing an encrypted value for a message or tool call.
+      properties:
+        type:
+          default: REASONING_ENCRYPTED_VALUE
+          enum:
+          - REASONING_ENCRYPTED_VALUE
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        subtype:
+          enum:
+          - tool-call
+          - message
+          title: Subtype
+          type: string
+        entityId:
+          title: Entityid
+          type: string
+        encryptedValue:
+          title: Encryptedvalue
+          type: string
+      required:
+      - encryptedValue
+      - entityId
+      - subtype
+      title: ReasoningEncryptedValueEvent
+    ReasoningEndEvent:
+      additionalProperties: true
+      description: Event indicating the end of a reasoning phase.
+      properties:
+        type:
+          default: REASONING_END
+          enum:
+          - REASONING_END
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+      required:
+      - messageId
+      title: ReasoningEndEvent
+    ReasoningMessage:
+      additionalProperties: true
+      description: A reasoning message containing the agent's internal reasoning process.
+      properties:
+        id:
+          title: Id
+          type: string
+        role:
+          default: reasoning
+          enum:
+          - reasoning
+          title: Role
+          type: string
+        content:
+          title: Content
+          type: string
+        encryptedValue:
+          nullable: true
+          type: string
+      required:
+      - content
+      - id
+      title: ReasoningMessage
+    ReasoningMessageChunkEvent:
+      additionalProperties: true
+      description: Event containing a chunk of reasoning message content.
+      properties:
+        type:
+          default: REASONING_MESSAGE_CHUNK
+          enum:
+          - REASONING_MESSAGE_CHUNK
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          nullable: true
+          type: string
+        delta:
+          nullable: true
+          type: string
+      title: ReasoningMessageChunkEvent
+    ReasoningMessageContentEvent:
+      additionalProperties: true
+      description: Event containing a piece of reasoning message content.
+      properties:
+        type:
+          default: REASONING_MESSAGE_CONTENT
+          enum:
+          - REASONING_MESSAGE_CONTENT
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+        delta:
+          title: Delta
+          type: string
+      required:
+      - delta
+      - messageId
+      title: ReasoningMessageContentEvent
+    ReasoningMessageEndEvent:
+      additionalProperties: true
+      description: Event indicating the end of a reasoning message.
+      properties:
+        type:
+          default: REASONING_MESSAGE_END
+          enum:
+          - REASONING_MESSAGE_END
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+      required:
+      - messageId
+      title: ReasoningMessageEndEvent
+    ReasoningMessageStartEvent:
+      additionalProperties: true
+      description: Event indicating the start of a reasoning message.
+      properties:
+        type:
+          default: REASONING_MESSAGE_START
+          enum:
+          - REASONING_MESSAGE_START
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+        role:
+          enum:
+          - reasoning
+          title: Role
+          type: string
+      required:
+      - messageId
+      - role
+      title: ReasoningMessageStartEvent
+    ReasoningStartEvent:
+      additionalProperties: true
+      description: Event indicating the start of a reasoning phase.
+      properties:
+        type:
+          default: REASONING_START
+          enum:
+          - REASONING_START
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+      required:
+      - messageId
+      title: ReasoningStartEvent
+    RecursiveCharacterLanguageTextSplitterOptions:
+      properties:
+        separators:
+          items:
+            type: string
+          title: Separators
+          type: array
+        keep_separator:
+          $ref: "#/components/schemas/Keep_Separator"
+        is_separator_regex:
+          title: Is Separator Regex
+          type: boolean
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+      title: RecursiveCharacterLanguageTextSplitterOptions
+    RecursiveCharacterTextSplitterOptions:
+      properties:
+        separators:
+          items:
+            type: string
+          title: Separators
+          type: array
+        keep_separator:
+          $ref: "#/components/schemas/Keep_Separator"
+        is_separator_regex:
+          title: Is Separator Regex
+          type: boolean
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+      title: RecursiveCharacterTextSplitterOptions
+    RecursiveJsonSplitterOptions:
+      properties:
+        max_chunk_size:
+          title: Max Chunk Size
+          type: integer
+        min_chunk_size:
+          title: Min Chunk Size
+          type: integer
+        convert_lists:
+          title: Convert Lists
+          type: boolean
+      title: RecursiveJsonSplitterOptions
+    RunAgentInput:
+      additionalProperties: true
+      description: Input for running an agent.
+      properties:
+        threadId:
+          title: Threadid
+          type: string
+        runId:
+          title: Runid
+          type: string
+        parentRunId:
+          nullable: true
+          type: string
+        state:
+          title: State
+        messages:
+          items:
+            $ref: "#/components/schemas/Messages_inner"
+          title: Messages
+          type: array
+        tools:
+          items:
+            $ref: "#/components/schemas/Tool"
+          title: Tools
+          type: array
+        context:
+          items:
+            $ref: "#/components/schemas/Context"
+          title: Context
+          type: array
+        forwardedProps:
+          title: Forwardedprops
+      required:
+      - context
+      - forwardedProps
+      - messages
+      - runId
+      - state
+      - threadId
+      - tools
+      title: RunAgentInput
+    RunAgentInputWithModelSettings:
+      additionalProperties: true
+      example:
+        threadId: threadId
+        parentRunId: parentRunId
+        systemPrompt: Systemprompt
+        reservedTokens: 6
+        modelSettings: ""
+        context:
+        - description: description
+          value: value
+        - description: description
+          value: value
+        messages:
+        - role: developer
+          encryptedValue: encryptedValue
+          name: name
+          id: id
+          content: content
+        - role: developer
+          encryptedValue: encryptedValue
+          name: name
+          id: id
+          content: content
+        maxTurns: 0
+        runId: runId
+        state: ""
+        tools:
+        - name: name
+          description: description
+          parameters: ""
+        - name: name
+          description: description
+          parameters: ""
+        forwardedProps: ""
+      properties:
+        threadId:
+          title: Threadid
+          type: string
+        runId:
+          title: Runid
+          type: string
+        parentRunId:
+          nullable: true
+          type: string
+        state:
+          title: State
+        messages:
+          items:
+            $ref: "#/components/schemas/Messages_inner"
+          title: Messages
+          type: array
+        tools:
+          items:
+            $ref: "#/components/schemas/Tool"
+          title: Tools
+          type: array
+        context:
+          items:
+            $ref: "#/components/schemas/Context"
+          title: Context
+          type: array
+        forwardedProps:
+          title: Forwardedprops
+        modelSettings:
+          allOf:
+          - $ref: "#/components/schemas/ModelSettingsInput"
+          nullable: true
+        systemPrompt:
+          $ref: "#/components/schemas/Systemprompt"
+        maxTurns:
+          nullable: true
+          type: integer
+        reservedTokens:
+          nullable: true
+          type: integer
+      required:
+      - context
+      - forwardedProps
+      - messages
+      - runId
+      - state
+      - threadId
+      - tools
+      title: RunAgentInputWithModelSettings
+    RunErrorEvent:
+      additionalProperties: true
+      description: Event indicating that a run has encountered an error.
+      properties:
+        type:
+          default: RUN_ERROR
+          enum:
+          - RUN_ERROR
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        message:
+          title: Message
+          type: string
+        code:
+          nullable: true
+          type: string
+      required:
+      - message
+      title: RunErrorEvent
+    RunFinishedEvent:
+      additionalProperties: true
+      description: Event indicating that a run has finished.
+      properties:
+        type:
+          default: RUN_FINISHED
+          enum:
+          - RUN_FINISHED
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        threadId:
+          title: Threadid
+          type: string
+        runId:
+          title: Runid
+          type: string
+        result:
+          anyOf: []
+          nullable: true
+          title: Result
+      required:
+      - runId
+      - threadId
+      title: RunFinishedEvent
+    RunStartedEvent:
+      additionalProperties: true
+      description: Event indicating that a run has started.
+      properties:
+        type:
+          default: RUN_STARTED
+          enum:
+          - RUN_STARTED
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        threadId:
+          title: Threadid
+          type: string
+        runId:
+          title: Runid
+          type: string
+        parentRunId:
+          nullable: true
+          type: string
+        input:
+          allOf:
+          - $ref: "#/components/schemas/RunAgentInput"
+          nullable: true
+      required:
+      - runId
+      - threadId
+      title: RunStartedEvent
+    ScaledAmount:
+      description: |-
+        Fixed-point monetary amount — avoids float/Decimal in API inputs.
+
+        actual_value = value / 10^scale
+        Example: 3.14159 USD → {"value": 314159, "scale": 5}
+
+        Reference: https://stackoverflow.com/a/77703260/31748896
+      example:
+        scale: 6
+        value: 0
+      properties:
+        value:
+          title: Value
+          type: integer
+        scale:
+          title: Scale
+          type: integer
+      required:
+      - scale
+      - value
+      title: ScaledAmount
+    SentenceTransformersTokenTextSplitterOptions:
+      properties:
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+        model_name:
+          title: Model Name
+          type: string
+        tokens_per_chunk:
+          title: Tokens Per Chunk
+          type: integer
+        model_kwargs:
+          additionalProperties: true
+          title: Model Kwargs
+          type: object
+        chunk_size:
+          title: Chunk Size
+          type: integer
+      title: SentenceTransformersTokenTextSplitterOptions
+    SpacyTextSplitterOptions:
+      properties:
+        separator:
+          title: Separator
+          type: string
+        pipeline:
+          title: Pipeline
+          type: string
+        max_length:
+          title: Max Length
+          type: integer
+        strip_whitespace:
+          title: Strip Whitespace
+          type: boolean
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+      title: SpacyTextSplitterOptions
+    StateDeltaEvent:
+      additionalProperties: true
+      description: Event containing a delta of the state.
+      properties:
+        type:
+          default: STATE_DELTA
+          enum:
+          - STATE_DELTA
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        delta:
+          items: {}
+          title: Delta
+          type: array
+      required:
+      - delta
+      title: StateDeltaEvent
+    StateSnapshotEvent:
+      additionalProperties: true
+      description: Event containing a snapshot of the state.
+      properties:
+        type:
+          default: STATE_SNAPSHOT
+          enum:
+          - STATE_SNAPSHOT
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        snapshot:
+          title: Snapshot
+      required:
+      - snapshot
+      title: StateSnapshotEvent
+    StepFinishedEvent:
+      additionalProperties: true
+      description: Event indicating that a step has finished.
+      properties:
+        type:
+          default: STEP_FINISHED
+          enum:
+          - STEP_FINISHED
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        stepName:
+          title: Stepname
+          type: string
+      required:
+      - stepName
+      title: StepFinishedEvent
+    StepStartedEvent:
+      additionalProperties: true
+      description: Event indicating that a step has started.
+      properties:
+        type:
+          default: STEP_STARTED
+          enum:
+          - STEP_STARTED
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        stepName:
+          title: Stepname
+          type: string
+      required:
+      - stepName
+      title: StepStartedEvent
+    SystemMessage:
+      additionalProperties: true
+      description: A system message.
+      properties:
+        id:
+          title: Id
+          type: string
+        role:
+          default: system
+          enum:
+          - system
+          title: Role
+          type: string
+        content:
+          title: Content
+          type: string
+        name:
+          nullable: true
+          type: string
+        encryptedValue:
+          nullable: true
+          type: string
+      required:
+      - content
+      - id
+      title: SystemMessage
+    TextInputContent:
+      additionalProperties: true
+      description: A text fragment in a multimodal user message.
+      properties:
+        type:
+          default: text
+          enum:
+          - text
+          title: Type
+          type: string
+        text:
+          title: Text
+          type: string
+      required:
+      - text
+      title: TextInputContent
+    TextMessageChunkEvent:
+      additionalProperties: true
+      description: Event containing a chunk of text message content.
+      properties:
+        type:
+          default: TEXT_MESSAGE_CHUNK
+          enum:
+          - TEXT_MESSAGE_CHUNK
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          nullable: true
+          type: string
+        role:
+          enum:
+          - developer
+          - system
+          - assistant
+          - user
+          nullable: true
+          type: string
+        delta:
+          nullable: true
+          type: string
+        name:
+          nullable: true
+          type: string
+      title: TextMessageChunkEvent
+    TextMessageContentEvent:
+      additionalProperties: true
+      description: Event containing a piece of text message content.
+      properties:
+        type:
+          default: TEXT_MESSAGE_CONTENT
+          enum:
+          - TEXT_MESSAGE_CONTENT
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+        delta:
+          title: Delta
+          type: string
+      required:
+      - delta
+      - messageId
+      title: TextMessageContentEvent
+    TextMessageEndEvent:
+      additionalProperties: true
+      description: Event indicating the end of a text message.
+      properties:
+        type:
+          default: TEXT_MESSAGE_END
+          enum:
+          - TEXT_MESSAGE_END
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+      required:
+      - messageId
+      title: TextMessageEndEvent
+    TextMessageStartEvent:
+      additionalProperties: true
+      description: Event indicating the start of a text message.
+      example:
+        role: assistant
+        rawEvent: ""
+        name: name
+        messageId: messageId
+        type: TEXT_MESSAGE_START
+        timestamp: 0
+      properties:
+        type:
+          default: TEXT_MESSAGE_START
+          enum:
+          - TEXT_MESSAGE_START
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+        role:
+          default: assistant
+          enum:
+          - developer
+          - system
+          - assistant
+          - user
+          title: Role
+          type: string
+        name:
+          nullable: true
+          type: string
+      required:
+      - messageId
+      title: TextMessageStartEvent
+    ThinkingEndEvent:
+      additionalProperties: true
+      description: Event indicating the end of a thinking step event.
+      properties:
+        type:
+          default: THINKING_END
+          enum:
+          - THINKING_END
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+      title: ThinkingEndEvent
+    ThinkingStartEvent:
+      additionalProperties: true
+      description: Event indicating the start of a thinking step event.
+      properties:
+        type:
+          default: THINKING_START
+          enum:
+          - THINKING_START
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        title:
+          nullable: true
+          type: string
+      title: ThinkingStartEvent
+    ThinkingTextMessageContentEvent:
+      additionalProperties: true
+      description: Event indicating a piece of a thinking text message.
+      properties:
+        type:
+          default: THINKING_TEXT_MESSAGE_CONTENT
+          enum:
+          - THINKING_TEXT_MESSAGE_CONTENT
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        delta:
+          title: Delta
+          type: string
+      required:
+      - delta
+      title: ThinkingTextMessageContentEvent
+    ThinkingTextMessageEndEvent:
+      additionalProperties: true
+      description: Event indicating the end of a thinking text message.
+      properties:
+        type:
+          default: THINKING_TEXT_MESSAGE_END
+          enum:
+          - THINKING_TEXT_MESSAGE_END
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+      title: ThinkingTextMessageEndEvent
+    ThinkingTextMessageStartEvent:
+      additionalProperties: true
+      description: Event indicating the start of a thinking text message.
+      properties:
+        type:
+          default: THINKING_TEXT_MESSAGE_START
+          enum:
+          - THINKING_TEXT_MESSAGE_START
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+      title: ThinkingTextMessageStartEvent
+    TokenTextSplitterOptions:
+      properties:
+        encoding_name:
+          title: Encoding Name
+          type: string
+        model_name:
+          nullable: true
+          type: string
+        allowed_special:
+          $ref: "#/components/schemas/Allowed_Special"
+        disallowed_special:
+          $ref: "#/components/schemas/Disallowed_Special"
+        chunk_size:
+          title: Chunk Size
+          type: integer
+        chunk_overlap:
+          title: Chunk Overlap
+          type: integer
+      title: TokenTextSplitterOptions
+    Tool:
+      additionalProperties: true
+      description: A tool definition.
+      example:
+        name: name
+        description: description
+        parameters: ""
+      properties:
+        name:
+          title: Name
+          type: string
+        description:
+          title: Description
+          type: string
+        parameters:
+          anyOf: []
+          nullable: true
+          title: Parameters
+      required:
+      - description
+      - name
+      title: Tool
+    ToolCall:
+      additionalProperties: true
+      description: "A tool call, modelled after OpenAI tool calls."
+      properties:
+        id:
+          title: Id
+          type: string
+        type:
+          default: function
+          enum:
+          - function
+          title: Type
+          type: string
+        function:
+          $ref: "#/components/schemas/FunctionCall"
+        encryptedValue:
+          nullable: true
+          type: string
+      required:
+      - function
+      - id
+      title: ToolCall
+    ToolCallArgsEvent:
+      additionalProperties: true
+      description: Event containing tool call arguments.
+      properties:
+        type:
+          default: TOOL_CALL_ARGS
+          enum:
+          - TOOL_CALL_ARGS
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        toolCallId:
+          title: Toolcallid
+          type: string
+        delta:
+          title: Delta
+          type: string
+      required:
+      - delta
+      - toolCallId
+      title: ToolCallArgsEvent
+    ToolCallChunkEvent:
+      additionalProperties: true
+      description: Event containing a chunk of tool call content.
+      properties:
+        type:
+          default: TOOL_CALL_CHUNK
+          enum:
+          - TOOL_CALL_CHUNK
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        toolCallId:
+          nullable: true
+          type: string
+        toolCallName:
+          nullable: true
+          type: string
+        parentMessageId:
+          nullable: true
+          type: string
+        delta:
+          nullable: true
+          type: string
+      title: ToolCallChunkEvent
+    ToolCallEndEvent:
+      additionalProperties: true
+      description: Event indicating the end of a tool call.
+      properties:
+        type:
+          default: TOOL_CALL_END
+          enum:
+          - TOOL_CALL_END
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        toolCallId:
+          title: Toolcallid
+          type: string
+      required:
+      - toolCallId
+      title: ToolCallEndEvent
+    ToolCallResultEvent:
+      additionalProperties: true
+      description: Event containing the result of a tool call.
+      properties:
+        type:
+          default: TOOL_CALL_RESULT
+          enum:
+          - TOOL_CALL_RESULT
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        messageId:
+          title: Messageid
+          type: string
+        toolCallId:
+          title: Toolcallid
+          type: string
+        content:
+          title: Content
+          type: string
+        role:
+          enum:
+          - tool
+          nullable: true
+          type: string
+      required:
+      - content
+      - messageId
+      - toolCallId
+      title: ToolCallResultEvent
+    ToolCallStartEvent:
+      additionalProperties: true
+      description: Event indicating the start of a tool call.
+      properties:
+        type:
+          default: TOOL_CALL_START
+          enum:
+          - TOOL_CALL_START
+          title: Type
+          type: string
+        timestamp:
+          nullable: true
+          type: integer
+        rawEvent:
+          anyOf: []
+          nullable: true
+          title: Rawevent
+        toolCallId:
+          title: Toolcallid
+          type: string
+        toolCallName:
+          title: Toolcallname
+          type: string
+        parentMessageId:
+          nullable: true
+          type: string
+      required:
+      - toolCallId
+      - toolCallName
+      title: ToolCallStartEvent
+    ToolMessage:
+      additionalProperties: true
+      description: A tool result message.
+      properties:
+        id:
+          title: Id
+          type: string
+        role:
+          default: tool
+          enum:
+          - tool
+          title: Role
+          type: string
+        content:
+          title: Content
+          type: string
+        toolCallId:
+          title: Toolcallid
+          type: string
+        error:
+          nullable: true
+          type: string
+        encryptedValue:
+          nullable: true
+          type: string
+      required:
+      - content
+      - id
+      - toolCallId
+      title: ToolMessage
+    UserMessage:
+      additionalProperties: true
+      description: A user message supporting text or multimodal content.
+      properties:
+        id:
+          title: Id
+          type: string
+        role:
+          default: user
+          enum:
+          - user
+          title: Role
+          type: string
+        content:
+          $ref: "#/components/schemas/Content"
+        name:
+          nullable: true
+          type: string
+        encryptedValue:
+          nullable: true
+          type: string
+      required:
+      - content
+      - id
+      title: UserMessage
+    ValidationError:
+      example:
+        msg: msg
+        loc:
+        - Location_inner
+        - Location_inner
+        input: ""
+        ctx: "{}"
+        type: type
+      properties:
+        loc:
+          items:
+            $ref: "#/components/schemas/Location_inner"
+          title: Location
+          type: array
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
+        input:
+          title: Input
+        ctx:
+          title: Context
+          type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    VideoInputContent:
+      additionalProperties: true
+      description: A video input content fragment.
+      properties:
+        type:
+          default: video
+          enum:
+          - video
+          title: Type
+          type: string
+        source:
+          $ref: "#/components/schemas/Source"
+        metadata:
+          anyOf: []
+          nullable: true
+          title: Metadata
+      required:
+      - source
+      title: VideoInputContent
+    Response_Ag_Ui_Gateway_Ai_Gateway_Ag_Ui__Model__Post:
+      discriminator:
+        mapping:
+          TEXT_MESSAGE_START: "#/components/schemas/TextMessageStartEvent"
+          TEXT_MESSAGE_CONTENT: "#/components/schemas/TextMessageContentEvent"
+          TEXT_MESSAGE_END: "#/components/schemas/TextMessageEndEvent"
+          TEXT_MESSAGE_CHUNK: "#/components/schemas/TextMessageChunkEvent"
+          THINKING_TEXT_MESSAGE_START: "#/components/schemas/ThinkingTextMessageStartEvent"
+          THINKING_TEXT_MESSAGE_CONTENT: "#/components/schemas/ThinkingTextMessageContentEvent"
+          THINKING_TEXT_MESSAGE_END: "#/components/schemas/ThinkingTextMessageEndEvent"
+          TOOL_CALL_START: "#/components/schemas/ToolCallStartEvent"
+          TOOL_CALL_ARGS: "#/components/schemas/ToolCallArgsEvent"
+          TOOL_CALL_END: "#/components/schemas/ToolCallEndEvent"
+          TOOL_CALL_CHUNK: "#/components/schemas/ToolCallChunkEvent"
+          TOOL_CALL_RESULT: "#/components/schemas/ToolCallResultEvent"
+          THINKING_START: "#/components/schemas/ThinkingStartEvent"
+          THINKING_END: "#/components/schemas/ThinkingEndEvent"
+          STATE_SNAPSHOT: "#/components/schemas/StateSnapshotEvent"
+          STATE_DELTA: "#/components/schemas/StateDeltaEvent"
+          MESSAGES_SNAPSHOT: "#/components/schemas/MessagesSnapshotEvent"
+          ACTIVITY_SNAPSHOT: "#/components/schemas/ActivitySnapshotEvent"
+          ACTIVITY_DELTA: "#/components/schemas/ActivityDeltaEvent"
+          RAW: "#/components/schemas/RawEvent"
+          CUSTOM: "#/components/schemas/CustomEvent"
+          RUN_STARTED: "#/components/schemas/RunStartedEvent"
+          RUN_FINISHED: "#/components/schemas/RunFinishedEvent"
+          RUN_ERROR: "#/components/schemas/RunErrorEvent"
+          STEP_STARTED: "#/components/schemas/StepStartedEvent"
+          STEP_FINISHED: "#/components/schemas/StepFinishedEvent"
+          REASONING_START: "#/components/schemas/ReasoningStartEvent"
+          REASONING_MESSAGE_START: "#/components/schemas/ReasoningMessageStartEvent"
+          REASONING_MESSAGE_CONTENT: "#/components/schemas/ReasoningMessageContentEvent"
+          REASONING_MESSAGE_END: "#/components/schemas/ReasoningMessageEndEvent"
+          REASONING_MESSAGE_CHUNK: "#/components/schemas/ReasoningMessageChunkEvent"
+          REASONING_END: "#/components/schemas/ReasoningEndEvent"
+          REASONING_ENCRYPTED_VALUE: "#/components/schemas/ReasoningEncryptedValueEvent"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/TextMessageStartEvent"
+      - $ref: "#/components/schemas/TextMessageContentEvent"
+      - $ref: "#/components/schemas/TextMessageEndEvent"
+      - $ref: "#/components/schemas/TextMessageChunkEvent"
+      - $ref: "#/components/schemas/ThinkingTextMessageStartEvent"
+      - $ref: "#/components/schemas/ThinkingTextMessageContentEvent"
+      - $ref: "#/components/schemas/ThinkingTextMessageEndEvent"
+      - $ref: "#/components/schemas/ToolCallStartEvent"
+      - $ref: "#/components/schemas/ToolCallArgsEvent"
+      - $ref: "#/components/schemas/ToolCallEndEvent"
+      - $ref: "#/components/schemas/ToolCallChunkEvent"
+      - $ref: "#/components/schemas/ToolCallResultEvent"
+      - $ref: "#/components/schemas/ThinkingStartEvent"
+      - $ref: "#/components/schemas/ThinkingEndEvent"
+      - $ref: "#/components/schemas/StateSnapshotEvent"
+      - $ref: "#/components/schemas/StateDeltaEvent"
+      - $ref: "#/components/schemas/MessagesSnapshotEvent"
+      - $ref: "#/components/schemas/ActivitySnapshotEvent"
+      - $ref: "#/components/schemas/ActivityDeltaEvent"
+      - $ref: "#/components/schemas/RawEvent"
+      - $ref: "#/components/schemas/CustomEvent"
+      - $ref: "#/components/schemas/RunStartedEvent"
+      - $ref: "#/components/schemas/RunFinishedEvent"
+      - $ref: "#/components/schemas/RunErrorEvent"
+      - $ref: "#/components/schemas/StepStartedEvent"
+      - $ref: "#/components/schemas/StepFinishedEvent"
+      - $ref: "#/components/schemas/ReasoningStartEvent"
+      - $ref: "#/components/schemas/ReasoningMessageStartEvent"
+      - $ref: "#/components/schemas/ReasoningMessageContentEvent"
+      - $ref: "#/components/schemas/ReasoningMessageEndEvent"
+      - $ref: "#/components/schemas/ReasoningMessageChunkEvent"
+      - $ref: "#/components/schemas/ReasoningEndEvent"
+      - $ref: "#/components/schemas/ReasoningEncryptedValueEvent"
+      title: Response Ag Ui Gateway Ai Gateway Ag Ui  Model  Post
+    Chunk_Splitter_Options:
+      anyOf:
+      - $ref: "#/components/schemas/CharacterTextSplitterOptions"
+      - $ref: "#/components/schemas/RecursiveCharacterTextSplitterOptions"
+      - $ref: "#/components/schemas/TokenTextSplitterOptions"
+      - $ref: "#/components/schemas/MarkdownHeaderTextSplitterOptions"
+      - $ref: "#/components/schemas/MarkdownTextSplitterOptions"
+      - $ref: "#/components/schemas/ExperimentalMarkdownSyntaxTextSplitterOptions"
+      - $ref: "#/components/schemas/HTMLHeaderTextSplitterOptions"
+      - $ref: "#/components/schemas/HTMLSemanticPreservingSplitterOptions"
+      - $ref: "#/components/schemas/HTMLSectionSplitterOptions"
+      - $ref: "#/components/schemas/RecursiveJsonSplitterOptions"
+      - $ref: "#/components/schemas/NLTKTextSplitterOptions"
+      - $ref: "#/components/schemas/SpacyTextSplitterOptions"
+      - $ref: "#/components/schemas/KonlpyTextSplitterOptions"
+      - $ref: "#/components/schemas/SentenceTransformersTokenTextSplitterOptions"
+      - $ref: "#/components/schemas/RecursiveCharacterLanguageTextSplitterOptions"
+      title: Chunk Splitter Options
+    Text:
+      anyOf:
+      - type: string
+      - items:
+          type: string
+        type: array
+      title: Text
+    Source:
+      discriminator:
+        mapping:
+          data: "#/components/schemas/InputContentDataSource"
+          url: "#/components/schemas/InputContentUrlSource"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/InputContentDataSource"
+      - $ref: "#/components/schemas/InputContentUrlSource"
+      title: Source
+    Keep_Separator:
+      anyOf:
+      - type: boolean
+      - enum:
+        - start
+        - end
+        type: string
+      title: Keep Separator
+    Text_1:
+      anyOf:
+      - type: string
+      - items:
+          type: string
+        type: array
+      nullable: true
+      title: Text
+    Messages_inner:
+      discriminator:
+        mapping:
+          activity: "#/components/schemas/ActivityMessage"
+          assistant: "#/components/schemas/AssistantMessage"
+          developer: "#/components/schemas/DeveloperMessage"
+          reasoning: "#/components/schemas/ReasoningMessage"
+          system: "#/components/schemas/SystemMessage"
+          tool: "#/components/schemas/ToolMessage"
+          user: "#/components/schemas/UserMessage"
+        propertyName: role
+      oneOf:
+      - $ref: "#/components/schemas/DeveloperMessage"
+      - $ref: "#/components/schemas/SystemMessage"
+      - $ref: "#/components/schemas/AssistantMessage"
+      - $ref: "#/components/schemas/UserMessage"
+      - $ref: "#/components/schemas/ToolMessage"
+      - $ref: "#/components/schemas/ActivityMessage"
+      - $ref: "#/components/schemas/ReasoningMessage"
+    Thinking:
+      anyOf:
+      - type: boolean
+      - enum:
+        - minimal
+        - low
+        - medium
+        - high
+        - xhigh
+        type: string
+      title: Thinking
+    File_Metadata_Filters_value:
+      anyOf:
+      - type: string
+      - type: integer
+      - type: number
+    Filters:
+      anyOf:
+      - $ref: "#/components/schemas/QueryFilterByFileMetadata"
+      - $ref: "#/components/schemas/QueryFilterByFileUid"
+      nullable: true
+      title: Filters
+    Systemprompt:
+      anyOf:
+      - type: string
+      - items:
+          type: string
+        type: array
+      nullable: true
+      title: Systemprompt
+    Allowed_Special:
+      anyOf:
+      - enum:
+        - all
+        type: string
+      - items:
+          type: string
+        type: array
+        uniqueItems: true
+      nullable: true
+      title: Allowed Special
+    Disallowed_Special:
+      anyOf:
+      - enum:
+        - all
+        type: string
+      - items:
+          type: string
+        type: array
+      title: Disallowed Special
+    Content_anyOf_inner:
+      discriminator:
+        mapping:
+          audio: "#/components/schemas/AudioInputContent"
+          binary: "#/components/schemas/BinaryInputContent"
+          document: "#/components/schemas/DocumentInputContent"
+          image: "#/components/schemas/ImageInputContent"
+          text: "#/components/schemas/TextInputContent"
+          video: "#/components/schemas/VideoInputContent"
+        propertyName: type
+      oneOf:
+      - $ref: "#/components/schemas/TextInputContent"
+      - $ref: "#/components/schemas/ImageInputContent"
+      - $ref: "#/components/schemas/AudioInputContent"
+      - $ref: "#/components/schemas/VideoInputContent"
+      - $ref: "#/components/schemas/DocumentInputContent"
+      - $ref: "#/components/schemas/BinaryInputContent"
+    Content:
+      anyOf:
+      - type: string
+      - items:
+          $ref: "#/components/schemas/Content_anyOf_inner"
+        type: array
+      title: Content
+    Location_inner:
+      anyOf:
+      - type: string
+      - type: integer
