@@ -1,0 +1,170 @@
+# ReasoningMessageContentEvent
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**Type** | Pointer to **string** |  | [optional] [default to "REASONING_MESSAGE_CONTENT"]
+**Timestamp** | Pointer to **NullableInt32** |  | [optional] 
+**RawEvent** | Pointer to [**NullableAnyOf**](anyOf&lt;&gt;.md) |  | [optional] 
+**MessageId** | **string** |  | 
+**Delta** | **string** |  | 
+
+## Methods
+
+### NewReasoningMessageContentEvent
+
+`func NewReasoningMessageContentEvent(messageId string, delta string, ) *ReasoningMessageContentEvent`
+
+NewReasoningMessageContentEvent instantiates a new ReasoningMessageContentEvent object
+This constructor will assign default values to properties that have it defined,
+and makes sure properties required by API are set, but the set of arguments
+will change when the set of required properties is changed
+
+### NewReasoningMessageContentEventWithDefaults
+
+`func NewReasoningMessageContentEventWithDefaults() *ReasoningMessageContentEvent`
+
+NewReasoningMessageContentEventWithDefaults instantiates a new ReasoningMessageContentEvent object
+This constructor will only assign default values to properties that have it defined,
+but it doesn't guarantee that properties required by API are set
+
+### GetType
+
+`func (o *ReasoningMessageContentEvent) GetType() string`
+
+GetType returns the Type field if non-nil, zero value otherwise.
+
+### GetTypeOk
+
+`func (o *ReasoningMessageContentEvent) GetTypeOk() (*string, bool)`
+
+GetTypeOk returns a tuple with the Type field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetType
+
+`func (o *ReasoningMessageContentEvent) SetType(v string)`
+
+SetType sets Type field to given value.
+
+### HasType
+
+`func (o *ReasoningMessageContentEvent) HasType() bool`
+
+HasType returns a boolean if a field has been set.
+
+### GetTimestamp
+
+`func (o *ReasoningMessageContentEvent) GetTimestamp() int32`
+
+GetTimestamp returns the Timestamp field if non-nil, zero value otherwise.
+
+### GetTimestampOk
+
+`func (o *ReasoningMessageContentEvent) GetTimestampOk() (*int32, bool)`
+
+GetTimestampOk returns a tuple with the Timestamp field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTimestamp
+
+`func (o *ReasoningMessageContentEvent) SetTimestamp(v int32)`
+
+SetTimestamp sets Timestamp field to given value.
+
+### HasTimestamp
+
+`func (o *ReasoningMessageContentEvent) HasTimestamp() bool`
+
+HasTimestamp returns a boolean if a field has been set.
+
+### SetTimestampNil
+
+`func (o *ReasoningMessageContentEvent) SetTimestampNil(b bool)`
+
+ SetTimestampNil sets the value for Timestamp to be an explicit nil
+
+### UnsetTimestamp
+`func (o *ReasoningMessageContentEvent) UnsetTimestamp()`
+
+UnsetTimestamp ensures that no value is present for Timestamp, not even an explicit nil
+### GetRawEvent
+
+`func (o *ReasoningMessageContentEvent) GetRawEvent() AnyOf`
+
+GetRawEvent returns the RawEvent field if non-nil, zero value otherwise.
+
+### GetRawEventOk
+
+`func (o *ReasoningMessageContentEvent) GetRawEventOk() (*AnyOf, bool)`
+
+GetRawEventOk returns a tuple with the RawEvent field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetRawEvent
+
+`func (o *ReasoningMessageContentEvent) SetRawEvent(v AnyOf)`
+
+SetRawEvent sets RawEvent field to given value.
+
+### HasRawEvent
+
+`func (o *ReasoningMessageContentEvent) HasRawEvent() bool`
+
+HasRawEvent returns a boolean if a field has been set.
+
+### SetRawEventNil
+
+`func (o *ReasoningMessageContentEvent) SetRawEventNil(b bool)`
+
+ SetRawEventNil sets the value for RawEvent to be an explicit nil
+
+### UnsetRawEvent
+`func (o *ReasoningMessageContentEvent) UnsetRawEvent()`
+
+UnsetRawEvent ensures that no value is present for RawEvent, not even an explicit nil
+### GetMessageId
+
+`func (o *ReasoningMessageContentEvent) GetMessageId() string`
+
+GetMessageId returns the MessageId field if non-nil, zero value otherwise.
+
+### GetMessageIdOk
+
+`func (o *ReasoningMessageContentEvent) GetMessageIdOk() (*string, bool)`
+
+GetMessageIdOk returns a tuple with the MessageId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessageId
+
+`func (o *ReasoningMessageContentEvent) SetMessageId(v string)`
+
+SetMessageId sets MessageId field to given value.
+
+
+### GetDelta
+
+`func (o *ReasoningMessageContentEvent) GetDelta() string`
+
+GetDelta returns the Delta field if non-nil, zero value otherwise.
+
+### GetDeltaOk
+
+`func (o *ReasoningMessageContentEvent) GetDeltaOk() (*string, bool)`
+
+GetDeltaOk returns a tuple with the Delta field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDelta
+
+`func (o *ReasoningMessageContentEvent) SetDelta(v string)`
+
+SetDelta sets Delta field to given value.
+
+
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
